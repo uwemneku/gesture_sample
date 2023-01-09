@@ -86,7 +86,10 @@ export default function Card() {
       { translateY: -Offset.value }, // the negative value makes it to move in the same direction as the gesture
       { scaleX: 1.15 },
     ],
-    opacity: hasGestureStarted.value ? 1 : 0,
+    opacity: withTiming(hasGestureStarted.value ? 1 : 0, { duration: 150 }),
+    height: withTiming(hasGestureStarted.value ? CONSTANTS.height : 0, {
+      duration: 150,
+    }),
   }));
   const animatedGestureContainerStyle = useAnimatedStyle(() => {
     const indicatorIsDown = 10 > Math.abs(Offset.value); //the indicator is close to the bottom of the card
