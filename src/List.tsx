@@ -11,31 +11,43 @@ import Animated, {
 interface Props {
   offset: SharedValue<number>;
   index: number;
+  color: string;
+  text: string;
+  maxIndexOfItems: number;
+  hasGestureStarted: SharedValue<boolean>;
 }
-const List = ({ offset, index: i }: Props) => {
-  const index = 4 - i;
-  console.log(i, index, CONSTANTS.height * index);
+const List = ({
+  offset,
+  index,
+  color,
+  text,
+  maxIndexOfItems,
+  hasGestureStarted,
+}: Props) => {
+  const reversedIndex = maxIndexOfItems - index;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        scale: interpolate(
-          offset.value,
-          [
-            CONSTANTS.height * (index - 1),
-            CONSTANTS.height * index,
-            CONSTANTS.height * (index + 1),
-          ],
-          [1, 1.2, 1],
-          Extrapolate.CLAMP
-        ),
+        scale: hasGestureStarted.value
+          ? interpolate(
+              offset.value,
+              [
+                CONSTANTS.height * (reversedIndex - 1),
+                CONSTANTS.height * reversedIndex,
+                CONSTANTS.height * (reversedIndex + 1),
+              ],
+              [1, 1.2, 1],
+              Extrapolate.CLAMP
+            )
+          : 1,
       },
     ],
   }));
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
-      <View style={styles.avatar} />
-      <Text style={styles.text}>List</Text>
+      <View style={[styles.avatar, { backgroundColor: color }]} />
+      <Text style={styles.text}>{text}</Text>
     </Animated.View>
   );
 };
@@ -50,9 +62,9 @@ const styles = StyleSheet.create({
     height: CONSTANTS.height,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    marginRight: 30,
+    width: CONSTANTS.height - 25,
+    height: CONSTANTS.height - 25,
+    marginRight: 20,
     borderRadius: 50,
     overflow: "hidden",
     backgroundColor: "black",
